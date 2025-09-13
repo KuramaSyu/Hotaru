@@ -22,7 +22,7 @@ class Config:
         bot_data = data.get("bot", {})
         return Config(bot=BotConfig(**bot_data))
 
-    def write_template(self, path: str):
+    def write_template(self, path: str) -> None:
         """Write the default config structure to a YAML file."""
         with open(path, "w") as f:
             yaml.safe_dump(asdict(self), f, sort_keys=False)
