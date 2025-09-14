@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field, asdict
+from os import write
 import yaml
 from typing import Dict, Any
+import logging
 
 @dataclass
 class BotConfig:
@@ -14,9 +16,11 @@ class Config:
     def from_path(path: str) -> "Config":
         try:
             with open(path, "r") as f:
-                data: Any = yaml.safe_load(f) or {}
+                data: Any = yaml.safe_load(f)
         except FileNotFoundError:
-            data = {}
+            default_config = Config()
+            default_config.write_template(path)
+            raise FileNotFoundError(f"Config file not found. A template has been created at {path}. Please fill it out and restart the application.")
 
         # Merge with default template
         bot_data = data.get("bot", {})
