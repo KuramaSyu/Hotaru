@@ -6,7 +6,7 @@ import ext
 
 
 # Create a GatewayBot instance
-config = Config.from_path("../config.yaml")
+config = Config.from_path("config.yaml")
 bot = hikari.GatewayBot(config.bot.secret)
 client = lightbulb.client_from_app(bot)
 
