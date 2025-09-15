@@ -2,14 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass, field
 
-@dataclass
-class Anime:
-    id: int
-    title: str
-    synopsis: str
-    episodes: int
-    score: float
-    genres: List[str] = field(default_factory=list)
+
+
+
+
 
 class AnimeService(ABC):
 
