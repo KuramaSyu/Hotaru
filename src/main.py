@@ -1,13 +1,17 @@
 # Import the libraries
 import hikari
 import lightbulb
+import miru
+
 from core import Config
 import ext
 
-
-# Create a GatewayBot instance
+# Load config
 config = Config.from_path("config.yaml")
+
+# Create a GatewayBot instance + miru client
 bot = hikari.GatewayBot(config.bot.secret)
+miru_client = miru.Client(bot)
 client = lightbulb.client_from_app(bot)
 
 # Ensure the client will be started when the bot is run
