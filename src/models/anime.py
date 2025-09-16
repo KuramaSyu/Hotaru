@@ -19,4 +19,4 @@ class Anime:
     synopsis: str
     episodes: int
     score: float
-    genres: List[str] = field(default_factory=list)
+    genres: List[str] = field(default_factory=List[str])
