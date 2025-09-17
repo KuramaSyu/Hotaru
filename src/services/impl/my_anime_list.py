@@ -121,7 +121,12 @@ class MyAnimeListAIOClient:
     async def _search(self) -> None:
         pass
 
-    async def search_anime(self, query: str, include_nsfw=True, fallback: bool = False) -> Dict[str, Any]:
+    async def search_anime(
+        self, 
+        query: str, 
+        include_nsfw: bool = True, 
+        fallback: bool = False
+    ) -> Dict[str, Any]:
         """search for anime by name
 
         Args:
@@ -167,7 +172,7 @@ class MyAnimeListAIOClient:
             if fallback:
                 log.warning(f"Error while fetching anime - title len = {len(query)}")
                 log.warning(traceback.format_exc())
-                return None
+                return {}
             else:
                 log.warning(f"fallback search for title {query}")
                 return await self.search_anime(query[:50], include_nsfw, True)
