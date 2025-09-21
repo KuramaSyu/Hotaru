@@ -43,6 +43,10 @@ class Studio:
 
 @dataclass
 class PartialAnime:
+    """
+    Represents an anime from MyAnimeList fetched with the 
+    search, which does not contain all information.
+    """
     id: int
     title: Title
     airing: Airing
