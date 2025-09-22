@@ -11,8 +11,12 @@ import traceback
 
 import aiohttp
 import asyncio
+from attr import dataclass
 from fuzzywuzzy import fuzz # type: ignore
 from expiring_dict import ExpiringDict # type: ignore
+from pprint import pformat
+
+# from models.anime import PartialAnime
 
 
 log = logging.getLogger(__name__)
@@ -32,7 +36,7 @@ class MALTypes(Enum):
     ANIME = 1
     MANGA = 2
 
-class MyAnimeListAIOClient:
+class MyAnimeListRestService:
     """Wrapper for MyAnimeList API Endpoint"""
     client_id: str = ""
     TTL = 60*60
@@ -180,6 +184,20 @@ class MyAnimeListAIOClient:
         self.response_cache.ttl(query, deepcopy(resp), self.TTL)
         return deepcopy(resp)
 
+# @dataclass
+# class SearchEntry:
+#     node: PartialAnime
 
+# @dataclass
+# class MyAnimeListSearchRoot:
+#     data: List[SearchEntry]
 
-
+if __name__ == "__main__":
+    import os
+    import json
+    mal = MyAnimeListRestService("3203ce3277af7e71ca5eabb7e8298c7b")
+    async def main() -> None:
+        r = await mal.fetch_anime(34599)
+        json.dump(r, open("mal_fetch_example.json", "w"), indent=4)
+        
+    asyncio.run(main())

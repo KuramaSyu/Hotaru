@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
 from operator import ge
-from typing import List, Any, Dict, Optional, Union
+from typing import List, Any, Dict, Literal, Optional, Union
 from datetime import datetime, timedelta
+from dataclasses_json import dataclass_json, config
+
 
 @dataclass
 class Themes:
@@ -25,30 +27,82 @@ class Genre:
     id: int
     name: str
 
-class Statistic:
-    ...
+@dataclass
+class Status:
+    watching: str
+    completed: str
+    on_hold: str
+    dropped: str
+    plan_to_watch: str
 
-class Recommendation:
-    ... # maybe sames as PartialAnime?
+    @property
+    def completion_rate(self) -> Optional[float]:
+        """
+        returns the completion rate between 0 and 1
+        which sums up watching, completed, on_hold and dropped
+        """
+        try:
+            user_amount = sum([int(self.watching), int(self.completed), int(self.completed), int(self.on_hold)])
+            return int(self.completed) / user_amount
+        except Exception:
+            return None
 
 @dataclass
-class MainPictures:
+class Statistic:
+    status: Status
+    num_list_users: int
+
+
+@dataclass
+class Song:
+    id: int
+    anime_id: int
+    text: str
+
+
+@dataclass_json
+@dataclass
+class Picture:
     medium: str
     large: str
 
+
+@dataclass_json
 @dataclass
 class Studio:
     id: int
     name: str
 
+
+@dataclass_json
 @dataclass
-class PartialAnime:
+class MinimalAnime:
+    id: int
+    title: str
+    main_picture: Picture
+
+
+@dataclass_json
+@dataclass
+class RelatedAnime:
+    anime: MinimalAnime = field(metadata=config(field_name="node"))
+    replation_type: Literal["prequel", "sequel", "alternative_setting", "alternative_version", "side_story", "summary", "parent_story", "spin_off"]
+    relation_type_formatted: str
+
+
+@dataclass_json
+@dataclass
+class Recommendation:
+    anime: MinimalAnime = field(metadata=config(field_name="node"))
+    num_recommendations: int
+
+
+@dataclass
+class PartialAnime(MinimalAnime):
     """
     Represents an anime from MyAnimeList fetched with the 
     search, which does not contain all information.
     """
-    id: int
-    title: Title
     airing: Airing
     synopsis: str
     mean: float
@@ -66,27 +120,20 @@ class PartialAnime:
     average_episode_duration: Optional[timedelta]
     rating: Optional[str]
     studios: List[Studio]
-    main_pictures: MainPictures
+    main_pictures: List[Picture]
 
 
-
-
-# Todo: check mal response and add classes 
 @dataclass
 class Anime(PartialAnime):
-    id: int
-    title: Title
-    synopsis: str
-    score: Optional[float]
-    popularity: Optional[int]
-    related: Dict[str, List[Dict[str, Any]]]
-    themes: Themes
-    rank: Optional[int]
-    source: Optional[str]
-    status: str
-    airing: Airing
-    image_url: str
-    statistics: Dict[str, Union[Dict[str, str], str, int]]
-    recommendations: Optional[List[Dict[str, Dict[str, str]]]]
-    title_synopsis: List[str] = field(default_factory=List[str])
+    """
+    Represents an anime from MyAnimeList with complete information fetched by ID.
+    """
+    pictures: List[Picture]
+    background: Optional[str]
+    related_anime: List[RelatedAnime]
+    recommendations: List[Recommendation]
+    opening_themes: List[Song]
+    ending_themes: List[Song]
+
+
 
