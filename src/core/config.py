@@ -8,8 +8,14 @@ class BotConfig:
     secret: str = "YOUR_API_KEY_HERE"
 
 @dataclass
+class MALConfig:
+    id: str = "YOUR_MAL_CLIENT_ID_HERE"
+    secret: str = "YOUR_MAL_SECRET_HERE"
+
+@dataclass
 class Config:
     bot: BotConfig = field(default_factory=BotConfig)
+    mal: MALConfig = field(default_factory=MALConfig)
 
     @staticmethod
     def from_path(path: str) -> "Config":
@@ -23,7 +29,10 @@ class Config:
 
         # Merge with default template
         bot_data = data.get("bot", {})
-        return Config(bot=BotConfig(**bot_data))
+        return Config(
+            bot=BotConfig(**bot_data),
+            mal=MALConfig(**data.get("mal", {}))
+        )
 
     def write_template(self, path: str) -> None:
         """Write the default config structure to a YAML file."""
