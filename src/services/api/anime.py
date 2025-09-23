@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Sequence
 from dataclasses import dataclass, field
+
+from models.anime import Anime, PartialAnime
 
 
 
@@ -13,7 +15,7 @@ class AnimeService(ABC):
     async def fetch_anime(
         self,
         id: int
-    ) -> Dict[str, Any]:
+    ) -> Anime:
         """
         Fetch an anime by ID, to get a detailed view.
         
@@ -25,7 +27,7 @@ class AnimeService(ABC):
         pass
 
     @abstractmethod
-    async def search_anime(self, query: str, include_nsfw: bool = True) -> Dict[str, Any]:
+    async def search_anime(self, query: str, include_nsfw: bool = True) -> Sequence[PartialAnime]:
         """search for anime by name
 
         Args:
