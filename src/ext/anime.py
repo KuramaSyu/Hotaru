@@ -8,7 +8,6 @@ class Anime(
     lightbulb.SlashCommand,
     name="anime",
     description="Get information about an anime",
-    auto_defer=True,
 ):
     @invoke
     async def invoke(self, ctx: lightbulb.Context) -> None:
