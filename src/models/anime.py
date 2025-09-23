@@ -84,7 +84,7 @@ class MinimalAnime(DataClassJsonMixin):
 @dataclass
 class RelatedAnime(DataClassJsonMixin):
     anime: MinimalAnime = field(metadata=config(field_name="node"))
-    replation_type: Literal["prequel", "sequel", "alternative_setting", "alternative_version", "side_story", "summary", "parent_story", "spin_off"]
+    relation_type: Literal["prequel", "sequel", "alternative_setting", "alternative_version", "side_story", "summary", "parent_story", "spin_off"]
     relation_type_formatted: str
 
 
@@ -125,11 +125,11 @@ class Anime(PartialAnime, DataClassJsonMixin):
     """
     Represents an anime from MyAnimeList with complete information fetched by ID.
     """
-    pictures: List[Picture] = field(default_factory=List[Picture])
-    related_anime: List[RelatedAnime] = field(default_factory=List[RelatedAnime])
-    recommendations: List[Recommendation] = field(default_factory=List[Recommendation])
-    opening_themes: List[Song] = field(default_factory=List[Song])
-    ending_themes: List[Song] = field(default_factory=List[Song])
+    pictures: List[Picture] = field(default_factory=list[Picture])
+    related_anime: List[RelatedAnime] = field(default_factory=list[RelatedAnime])
+    recommendations: List[Recommendation] = field(default_factory=list[Recommendation])
+    opening_themes: List[Song] = field(default_factory=list[Song])
+    ending_themes: List[Song] = field(default_factory=list[Song])
     background: Optional[str] = None
 
 
