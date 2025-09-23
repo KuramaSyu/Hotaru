@@ -2,18 +2,21 @@ from dataclasses import dataclass, field
 from operator import ge
 from typing import List, Any, Dict, Literal, Optional, Union
 from datetime import datetime, timedelta
-from dataclasses_json import dataclass_json, config
+from dataclasses_json import DataClassJsonMixin, dataclass_json, config
 
+iso_datetime_no_optional_config = config(
+    decoder=datetime.fromisoformat,
+    encoder=lambda date: date.isoformat()
+)
+iso_datetime_config = config(
+    decoder=lambda date: datetime.fromisoformat(date) if date else None,
+    encoder=lambda date: date.isoformat() if date else None,
+)
 
 @dataclass
-class Themes:
+class Themes(DataClassJsonMixin):
     openings: Optional[List[str]]
     endings: Optional[List[str]]
-
-@dataclass
-class Airing: 
-    start: Optional[datetime]
-    stop: Optional[datetime]
 
 @dataclass
 class Title:
@@ -23,12 +26,12 @@ class Title:
     alternatives: List[str] = field(default_factory=List[str])
 
 @dataclass
-class Genre:
+class Genre(DataClassJsonMixin):
     id: int
     name: str
 
 @dataclass
-class Status:
+class Status(DataClassJsonMixin):
     watching: str
     completed: str
     on_hold: str
@@ -48,92 +51,86 @@ class Status:
             return None
 
 @dataclass
-class Statistic:
+class Statistic(DataClassJsonMixin):
     status: Status
     num_list_users: int
 
-
 @dataclass
-class Song:
+class Song(DataClassJsonMixin):
     id: int
     anime_id: int
     text: str
 
 
-@dataclass_json
 @dataclass
-class Picture:
+class Picture(DataClassJsonMixin):
     medium: str
     large: str
 
 
-@dataclass_json
 @dataclass
-class Studio:
+class Studio(DataClassJsonMixin):
     id: int
     name: str
 
 
-@dataclass_json
 @dataclass
-class MinimalAnime:
+class MinimalAnime(DataClassJsonMixin):
     id: int
     title: str
     main_picture: Picture
 
 
-@dataclass_json
 @dataclass
-class RelatedAnime:
+class RelatedAnime(DataClassJsonMixin):
     anime: MinimalAnime = field(metadata=config(field_name="node"))
     replation_type: Literal["prequel", "sequel", "alternative_setting", "alternative_version", "side_story", "summary", "parent_story", "spin_off"]
     relation_type_formatted: str
 
 
-@dataclass_json
 @dataclass
-class Recommendation:
+class Recommendation(DataClassJsonMixin):
     anime: MinimalAnime = field(metadata=config(field_name="node"))
     num_recommendations: int
 
 
 @dataclass
-class PartialAnime(MinimalAnime):
+class PartialAnime(MinimalAnime, DataClassJsonMixin):
     """
     Represents an anime from MyAnimeList fetched with the 
     search, which does not contain all information.
     """
-    airing: Airing
     synopsis: str
-    mean: float
-    rank: Optional[int]
-    popularity: Optional[int]
-    score: Optional[float]
-    episodes: Optional[int]
     nsfw: str
-    created_at: datetime
-    updated_at: Optional[datetime]
     media_type: str
     status: str
     genres: List[Genre]
-    source: Optional[str]
     average_episode_duration: Optional[timedelta]
-    rating: Optional[str]
     studios: List[Studio]
-    main_pictures: List[Picture]
-
+    main_picture: Picture
+    created_at: datetime = field(metadata=iso_datetime_no_optional_config)
+    
+    mean: Optional[float] = None
+    start_date: Optional[datetime] = field(metadata=iso_datetime_config, default_factory=lambda: None)
+    end_date: Optional[datetime] = field(metadata=iso_datetime_config, default_factory=lambda: None)
+    source: Optional[str] = None
+    updated_at: Optional[datetime] = field(metadata=iso_datetime_config, default_factory=lambda: None)
+    rating: Optional[str] = None
+    rank: Optional[int] = None
+    popularity: Optional[int] = None
+    num_episodes: Optional[int] = None
 
 @dataclass
-class Anime(PartialAnime):
+class Anime(PartialAnime, DataClassJsonMixin):
     """
     Represents an anime from MyAnimeList with complete information fetched by ID.
     """
-    pictures: List[Picture]
-    background: Optional[str]
-    related_anime: List[RelatedAnime]
-    recommendations: List[Recommendation]
-    opening_themes: List[Song]
-    ending_themes: List[Song]
+    pictures: List[Picture] = field(default_factory=List[Picture])
+    related_anime: List[RelatedAnime] = field(default_factory=List[RelatedAnime])
+    recommendations: List[Recommendation] = field(default_factory=List[Recommendation])
+    opening_themes: List[Song] = field(default_factory=List[Song])
+    ending_themes: List[Song] = field(default_factory=List[Song])
+    background: Optional[str] = None
 
 
 
