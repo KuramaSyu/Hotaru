@@ -21,7 +21,7 @@ client = lightbulb.client_from_app(bot)
 # Get the registry for the default context
 registry = client.di.registry_for(lightbulb.di.Contexts.DEFAULT)
 # Register our new dependency
-registry.register_factory(MyAnimeListRestService, lambda: MyAnimeListRestService(config.mal.id))
+registry.register_factory(AnimeService, lambda: MyAnimeListRestService(config.mal.id))
 registry.register_factory(miru.Client, lambda: miru_client)
 
 
